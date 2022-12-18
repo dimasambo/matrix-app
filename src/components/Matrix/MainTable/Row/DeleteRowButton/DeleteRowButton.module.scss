@@ -1,0 +1,22 @@
+.delete {
+  position: absolute;
+  cursor: pointer;
+  top: calc(50% - 10px);
+
+  img {
+    width: 15px;
+    transition: .3s;
+  }
+
+  &:hover img {
+    transform: scale(1.07);
+  }
+}
+
+.leftDelete {
+  left: 78px;
+}
+
+.rightDelete {
+  right: 78px;
+}

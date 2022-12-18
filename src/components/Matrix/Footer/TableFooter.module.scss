@@ -1,0 +1,36 @@
+.footer {
+  display: flex;
+  gap: 5px;
+  margin-top: 15px;
+  position: relative;
+
+  .average {
+    min-width: 70px;
+    height: 30px;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    background: #585858;
+    color: white;
+  }
+
+  .average.m {
+    margin-right: 10px;
+  }
+
+  .add {
+    position: absolute;
+    bottom: 33px;
+    left: 85px;
+    cursor: pointer;
+
+    img {
+      width: 12px;
+      transition: .3s;
+    }
+
+    &:hover img {
+      transform: scale(1.07);
+    }
+  }
+}

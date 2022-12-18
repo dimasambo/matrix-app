@@ -1,0 +1,43 @@
+.row {
+  display: flex;
+  gap: 5px;
+  position: relative;
+
+  .matrixCell {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 70px;
+    height: 30px;
+    background: #d9f1ff;
+    cursor: pointer;
+  }
+
+  .matrixCell.gradient {
+    background: linear-gradient(0deg, rgba(154,255,179,1) 0%, rgba(229,255,137,1) 90%);
+  }
+
+  .m {
+    background: #585858;
+    color: white;
+    width: 70px;
+    height: 30px;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    margin-right: 10px;
+    cursor: pointer;
+  }
+
+  .sum {
+    background: #585858;
+    color: white;
+    width: 70px;
+    height: 30px;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    margin-left: 10px;
+    cursor: pointer;
+  }
+}

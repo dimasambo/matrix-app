@@ -1,0 +1,17 @@
+.matrixCell {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 70px;
+  height: 30px;
+  background: #d9f1ff;
+  cursor: pointer;
+
+  &:hover {
+    background: #9ee3f3;
+  }
+}
+
+.matrixCell.nearestValue {
+  background: #9affb3;
+}

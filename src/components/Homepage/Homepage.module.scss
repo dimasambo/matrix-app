@@ -1,0 +1,10 @@
+.homepageWrapper {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  max-width: 100%;
+  height: calc(100vh - 50px);
+  margin: 0 auto;
+  padding: 30px;
+  box-sizing: border-box;
+}
