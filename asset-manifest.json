@@ -1,0 +1,15 @@
+{
+  "files": {
+    "main.css": "/matrix-app/static/css/main.2e7bdb83.css",
+    "main.js": "/matrix-app/static/js/main.94dd26a3.js",
+    "static/js/787.284a3ba0.chunk.js": "/matrix-app/static/js/787.284a3ba0.chunk.js",
+    "index.html": "/matrix-app/index.html",
+    "main.2e7bdb83.css.map": "/matrix-app/static/css/main.2e7bdb83.css.map",
+    "main.94dd26a3.js.map": "/matrix-app/static/js/main.94dd26a3.js.map",
+    "787.284a3ba0.chunk.js.map": "/matrix-app/static/js/787.284a3ba0.chunk.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.2e7bdb83.css",
+    "static/js/main.94dd26a3.js"
+  ]
+}
