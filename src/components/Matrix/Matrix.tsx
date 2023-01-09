@@ -1,8 +1,6 @@
 import React, {FC, useContext, useEffect, useState} from "react";
 import s from "./Matrix.module.scss"
-import cellStyle from "./MainTable/Row/Cell/Cell.module.scss"
 import {HomepageContext, MatrixContext} from "../../context/context";
-import {Row} from "./MainTable/Row/Row";
 import {Cell} from "../../types/types";
 import {MainTable} from "./MainTable/MainTable";
 import {TableHeader} from "./Header/TableHeader";
@@ -12,163 +10,217 @@ export const Matrix: FC = ({}) => {
 
     const {toggleInputValues} = useContext(HomepageContext)
     const [array, setArray] = useState<Array<Array<Cell>>>([])
+    const [sortedArray, setSortedArray] = useState<Array<Cell>>([])
     const [closestValues, setClosestValues] = useState<Array<Cell>>([])
-    const [isCleaning, setIsCleaning] = useState(false)
     const [average, setAverage] = useState<Array<number>>([])
     const [reCalcSumFlag, setReCalcSumFlag] = useState(false)
     const [nArr, setNArr] = useState<Array<number>>([])
 
     useEffect(() => {
         if (toggleInputValues.inputValues.n && toggleInputValues.inputValues.m) {
-            const testArray: Array<Array<Cell>> = []
+            const tempArray: Array<Array<Cell>> = []
             let id: number = 0
-            const testNArr: Array<number> = []
+            const tempNArr: Array<number> = []
 
             for (let i = 0; i < toggleInputValues.inputValues.m; i++) {
-                testArray[i] = []
+                tempArray[i] = []
                 for (let j = 0; j < toggleInputValues.inputValues.n; j++) {
                     if (i === 0) {
-                        testNArr.push(j)
+                        tempNArr.push(j)
                     }
-                    testArray[i].push({
+                    tempArray[i].push({
                         id: id,
                         amount: Math.floor(Math.random() * 900) + 100
                     })
                     id++
                 }
             }
-            setArray(testArray)
-            setNArr(testNArr)
+            setArray(tempArray)
+            setNArr(tempNArr)
         }
     }, [toggleInputValues.inputValues])
 
     useEffect(() => {
         if (closestValues.length) {
-            closestValues.forEach(item => {
-                document.getElementById(String(item.id))?.classList.add(cellStyle.nearestValue)
+            const tempArray = createTempArray(array)
+            tempArray.forEach(tempArrItem => {
+                tempArrItem.forEach(tempArrSecondItem => {
+                    closestValues.forEach(item => {
+                        if(tempArrSecondItem.id === item.id) {
+                            tempArrSecondItem.nearestValue = true
+                        }
+                    })
+                })
             })
+            setArray(tempArray)
         }
     }, [closestValues])
 
     useEffect(() => {
-        let testAverage: Array<number> = []
+        setSortedArray(transformDoubleArrayInLine(array).sort((a: Cell, b: Cell) => a.amount - b.amount))
+
+        let tempAverage: Array<number> = []
         array.forEach((item, index) => {
             item.forEach((secondItem, secondIndex) => {
                 if (index === 0) {
-                    testAverage.push(secondItem.amount / 2)
+                    tempAverage.push(secondItem.amount / 2)
                 } else {
-                    testAverage[secondIndex] += secondItem.amount / 2
+                    tempAverage[secondIndex] += secondItem.amount / 2
                 }
             })
         })
 
-        setAverage(testAverage)
-        console.log(array)
+        setAverage(tempAverage)
     }, [array])
 
-    const handleCellHover = (amount: number, id: number) => {
-        const testArray: Array<Array<Cell>> = array.filter(() => true)
+    const createTempArray = (array: Array<Array<Cell>>): Array<Array<Cell>> => {
+        return array.filter(item => true)
+    }
 
-        setClosestValues(findEqualValue(testArray, amount, id))
+    const transformDoubleArrayInLine = (arr: Array<Array<Cell>>): Array<Cell> => {
+        let tempArr: Array<Cell> = [];
+
+        arr.forEach(item => {
+            item.forEach(secondItem => {
+                tempArr.push(secondItem)
+            })
+        })
+
+        return tempArr;
+    }
+
+    const handleCellHover = (amount: number, id: number) => {
+        const tempArray = createTempArray(array)
+
+        setClosestValues(findNearestValue(tempArray, amount, id))
     }
 
     const handleCellMouseLeave = () => {
-        array.forEach(item => {
-            item.forEach(secondItem => {
-                const el = document.getElementById(String(secondItem.id))
-                if (el && el.classList.contains(cellStyle.nearestValue)) {
-                    el.classList.remove(cellStyle.nearestValue)
+        const tempArray: Array<Array<Cell>> = array.filter(item => true)
+        tempArray.forEach(tempArrItem => {
+            tempArrItem.forEach(tempArrSecondItem => {
+                if(tempArrSecondItem.nearestValue === true) {
+                    tempArrSecondItem.nearestValue = false
                 }
             })
         })
+        setArray(tempArray)
         setClosestValues([])
-        setIsCleaning(false)
     }
 
     const handleCellClick = (amount: number, id: number) => {
-        let testArr: Array<Array<Cell>> = array.filter(item => true)
+        const tempArray = createTempArray(array)
 
-        testArr.forEach(item => {
+        tempArray.forEach(item => {
             item.forEach(secondItem => {
                 if (secondItem.amount === amount && secondItem.id === id) {
                     secondItem.amount += 1
-                    setArray(testArr)
+                    setArray(tempArray)
                     handleCellMouseLeave()
-                    setIsCleaning(true)
                     setReCalcSumFlag(!reCalcSumFlag)
-                    setClosestValues(findEqualValue(testArr, amount, id))
+                    setClosestValues(findNearestValue(tempArray, amount, id))
                     return true
                 }
             })
         })
 
-        setArray(testArr)
+        setArray(tempArray)
     }
 
-    const findEqualValue = (arr: Array<Array<Cell>>, value: number, id: number): Array<Cell> => {
+    const findNearestValue = (arr: Array<Array<Cell>>, value: number, id: number): Array<Cell> => {
         const result: Array<Cell> = []
 
         if (toggleInputValues.inputValues.n && toggleInputValues.inputValues.m) {
-            let testValue = value
 
-            while (result.length !== toggleInputValues.inputValues.x) {
-                for (let i = 0; i < (arr.length); i++) {
-                    for (let j = 0; j < (toggleInputValues.inputValues.n); j++) {
-                        if (arr[i][j].amount === testValue && arr[i][j].id !== id) {
-                            result.push(arr[i][j])
-                            if (result.length === toggleInputValues.inputValues.x) {
-                                return result
+            const xValue = toggleInputValues.inputValues.x
+
+            sortedArray.forEach((item, index) => {
+                if (item.id === id && xValue) { // find the desired object in sorted array by id
+
+                    let counter = 1 // to count position to which to add the nearest value
+                    let outOfBorderNumbers = 0
+
+                    // if number of nearest values from the LEFT side of hovered object more than number of values...
+                    // ...BEHIND in the sorted array, then initialBorder <= 0
+                    const initialBorder = (index + 1) - Math.ceil(xValue / 2)
+
+                    // if number of nearest values from the RIGHT side of hovered object more than number of values...
+                    // ...AHEAD in the sorted array, then finalBorder > sortedArray.length
+                    const finalBorder = (index + 1) + Math.ceil(xValue / 2) //
+
+                    for (let i = 1; i <= xValue; i++) { // fill the result array with x nearest values
+
+                        if(finalBorder > sortedArray.length) {
+
+                            // count number of values that go beyond the LEFT limit
+                            outOfBorderNumbers = ((index + 1) + xValue) - sortedArray.length
+
+                        } else if(initialBorder <= 0) {
+
+                            // count number of values that go beyond the RIGHT limit
+                            outOfBorderNumbers = xValue - (index + 1)
+                        }
+
+                        if(i <= xValue - outOfBorderNumbers) { // if there are NO values beyond the any limit
+                            if (i % 2 !== 0) { // add right nearest value
+                                result.push(sortedArray[index + counter])
+                            } else { // add left nearest value
+                                result.push(sortedArray[index - counter])
+                                counter++
                             }
+                        } else { // if there are values beyond the any limit
+                            if(finalBorder > sortedArray.length) { // check FINAL(right) limit
+                                result.push(sortedArray[index - counter])
+                            } else { // check INITIAL(left) limit
+                                result.push(sortedArray[index + counter])
+                            }
+                            counter++
                         }
                     }
                 }
-
-                if (testValue === value) {
-                    testValue++
-                } else if (testValue > value) {
-                    testValue = value + (value - testValue)
-                } else {
-                    testValue = value + ((value - testValue) + 1)
-                }
-            }
+            })
         }
         return result
     }
 
     const onAddRowClick = () => {
-        const testArray: Array<Array<Cell>> = [[]]
+        const tempArray: Array<Array<Cell>> = [[]]
         let id = array[array.length - 1][array[array.length - 1].length - 1].id + 1
 
         for (let i = 0; i < array[array.length - 1].length; i++) {
-            testArray[0].push({
+            tempArray[0].push({
                 id: id,
                 amount: Math.floor(Math.random() * 900) + 100
             })
             id++
         }
 
-        setArray(array => [...array, ...testArray])
+        setArray(array => [...array, ...tempArray])
     }
 
     const onDeleteRowClick = (deletedArray: Array<Cell>) => {
-        const testArray: Array<Array<Cell>> = [...array]
-        testArray.forEach((item, index) => {
-            if (item === deletedArray) {
-                testArray.splice(index, 1)
-            }
-        })
+        if(toggleInputValues.inputValues.x && (array.length-1)*array[0].length > toggleInputValues.inputValues.x) {
+            const tempArray = createTempArray(array)
+            tempArray.forEach((item, index) => {
+                if (item === deletedArray) {
+                    tempArray.splice(index, 1)
+                }
+            })
 
-        setArray(testArray)
+            setArray(tempArray)
+        } else {
+            alert(`Can't delete row. X will be more than M*N`)
+        }
     }
 
     return <MatrixContext.Provider value={{
         handleCellClick, handleCellHover, handleCellMouseLeave,
-        isCleaning, setIsCleaning, onDeleteRowClick, reCalcSumFlag
+        onDeleteRowClick, reCalcSumFlag
     }}>
         <div className={s.wrapper}>
-            <TableHeader nArr={nArr} />
-            <MainTable array={array} />
-            <TableFooter average={average} onAddRowClick={onAddRowClick} />
+            <TableHeader nArr={nArr}/>
+            <MainTable array={array}/>
+            <TableFooter average={average} onAddRowClick={onAddRowClick}/>
         </div>
     </MatrixContext.Provider>
 }

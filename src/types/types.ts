@@ -3,7 +3,8 @@ export type CellValue = number;
 
 export type Cell = {
     id: CellId,
-    amount: CellValue
+    amount: CellValue,
+    nearestValue?: boolean
 }
 
 export type InputValuesType = {
@@ -24,8 +25,6 @@ export type HomepageContextType = {
 }
 
 export type MatrixContextType = {
-    isCleaning: boolean
-    setIsCleaning: (isCleaning: boolean) => void
     handleCellHover: (amount: number, id: number) => void
     handleCellClick: (amount: number, id: number) => void
     handleCellMouseLeave: () => void

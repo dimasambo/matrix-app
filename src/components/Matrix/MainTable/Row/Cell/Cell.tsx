@@ -9,12 +9,12 @@ type PropsType = {
 
 export const CellItem: FC<PropsType> = ({item}) => {
 
-    const {setIsCleaning, isCleaning, handleCellMouseLeave, handleCellHover, handleCellClick} = useContext(MatrixContext)
+    const {handleCellMouseLeave, handleCellHover, handleCellClick} = useContext(MatrixContext)
 
-    return <div id={String(item.id)} className={s.matrixCell}
+    return <div id={String(item.id)}
+                className={item.nearestValue === true ? s.matrixCell + ' ' + s.nearestValue : s.matrixCell}
                 onMouseOver={() => {
-                    !isCleaning && handleCellHover(item.amount, item.id)
-                    setIsCleaning(true)
+                    handleCellHover(item.amount, item.id)
                 }}
                 onMouseLeave={handleCellMouseLeave}
                 onClick={() => handleCellClick(item.amount, item.id)}>
